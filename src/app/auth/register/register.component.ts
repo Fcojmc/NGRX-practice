@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../models/user';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-register',
@@ -31,11 +32,24 @@ export class RegisterComponent implements OnInit {
 
     const user: User = this.registroForm.value;
 
+    Swal.fire({
+      title: 'Comprobando',
+      didOpen: () => {
+        Swal.showLoading()
+      }
+    });
 
     this.authService.crearUsuario(user)
         .then(credenciales => {
-          console.log(credenciales);
-          this.router.navigate(['/']);
-        }).catch( err => console.log(err));
+          Swal.close();
+          this.router.navigate(['/login']);
+        }).catch( err => {
+          Swal.fire({
+            title: 'Error',
+            text: err.message,
+            icon: 'error',
+            confirmButtonText: 'Cool'
+          });
+        });
   }
 }
